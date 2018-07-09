@@ -9,11 +9,11 @@
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
  *
- * This engine makes the canvas' context (ctx) object globally available to make 
+ * This engine makes the canvas' context (ctx) object globally available to make
  * writing app.js a little simpler to work with.
  */
 
-var Engine = (function(global) {
+var Engine = (function (global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
@@ -90,7 +90,7 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function (enemy) {
             enemy.update(dt);
         });
         player.update();
@@ -107,19 +107,19 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
-            ],
+            'images/water-block.png',   // Top row is water
+            'images/stone-block.png',   // Row 1 of 3 of stone
+            'images/stone-block.png',   // Row 2 of 3 of stone
+            'images/stone-block.png',   // Row 3 of 3 of stone
+            'images/grass-block.png',   // Row 1 of 2 of grass
+            'images/grass-block.png'    // Row 2 of 2 of grass
+        ],
             numRows = 6,
             numCols = 5,
             row, col;
-        
+
         // Before drawing, clear existing canvas
-        ctx.clearRect(0,0,canvas.width,canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
@@ -135,10 +135,41 @@ var Engine = (function(global) {
                  * we're using them over and over.
                  */
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                var collectType=collectable.grid[row][col];
+                switch(collectType){
+                  case 0:
+                  break;
+                  case 1:
+                  ctx.drawImage(Resources.get('images/gem-blue.png'), col*101+25, row* 83+30, 50, 85);
+                  break;
+                  case 2:
+                  ctx.drawImage(Resources.get('images/gem-green.png'), col*101+25, row* 83+30, 50, 85);
+                  break;
+                  case 3:
+                  ctx.drawImage(Resources.get('images/gem-orange.png'), col*101+25, row* 83+30, 50, 85);
+                  break;
+                  case 4:
+                  ctx.drawImage(Resources.get('images/Heart.png'), col*101+25, row* 83+40, 50, 85);
+                  break;
+                  case 5:
+                  ctx.drawImage(Resources.get('images/Star.png'), col*101+25, row* 83+30, 50, 85);
+                  break;
+                }
             }
         }
 
         renderEntities();
+
+        //display scores and lives at top of screen
+        ctx.font = "30px serif";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "left";
+        ctx.clearRect(10, 50, 500, -50);
+        ctx.fillText("LEVEL: " + player.level, 10, 38);
+        ctx.drawImage(Resources.get('images/gem-blue.png'), 194, 1, 25, 42);
+        ctx.fillText(player.score, 224, 38);
+        ctx.drawImage(Resources.get('images/Heart.png'), 294, 4, 25, 42);
+        ctx.fillText(player.lives, 324, 38);
     }
 
     /* This function is called by the render function and is called on each game
@@ -149,11 +180,12 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function (enemy) {
             enemy.render();
         });
 
         player.render();
+        gameover.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -173,7 +205,13 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-horn-girl.png',
+        'images/char-princess-girl.png',
+        'images/gem-blue.png',
+        'images/gem-green.png',
+        'images/gem-orange.png',
+        'images/Heart.png',
+        'images/Star.png'
     ]);
     Resources.onReady(init);
 
